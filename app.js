@@ -128,6 +128,9 @@ function start() {
   rollBtn.hidden = false;
   holdBtn.hidden = false;
 
+  // if(document.querySelector(".player-0-panel").className.includes('winner')){
+
+  // }
   document.querySelector(".player-0-panel").classList.remove("winner");
-  document.querySelector(".player-0-panel").classList.remove("winner");
+  document.querySelector(".player-1-panel").classList.remove("winner");
 }
