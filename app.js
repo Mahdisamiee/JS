@@ -17,12 +17,15 @@ let p1CurrentScore = document.querySelector("#current-0"),
   p2CurrentScore = document.querySelector("#current-1");
 
 let player1TurnFlag = true; // if true player1 has to play and if false player2 has to.
-let prevRoll = 0; //if a player bring two 6 after each other he lose all scores.
+let prevRoll1 = 0; //if a player bring two 6 after each other he lose all scores.
+let prevRoll2 = 0; //if a player bring two 6 after each other he lose all scores.
 /**
  * Define Dice
  */
-let dice = document.querySelector("img.dice");
-dice.hidden = true;
+let dice1 = document.querySelector("#dice1");
+let dice2 = document.querySelector("#dice2");
+dice1.hidden = true;
+dice2.hidden = true;
 /**
  * Define Events
  */
@@ -32,22 +35,39 @@ newBtn.addEventListener("click", start);
 
 // Roll Dice
 rollBtn.addEventListener("click", (event) => {
-  let diceNumber = Math.floor(Math.random() * 6) + 1; // 1 <= number <= 6
-  if (prevRoll == diceNumber && diceNumber == 6) {
+  let diceNumber1 = Math.floor(Math.random() * 6) + 1; // 1 <= number <= 6
+  let diceNumber2 = Math.floor(Math.random() * 6) + 1; // 1 <= number <= 6
+  if (
+    (prevRoll1 == diceNumber1 && diceNumber1 == 6) ||
+    (prevRoll2 == diceNumber2 && diceNumber2 == 6)
+  ) {
     twoSix();
-    prevRoll = 0;
+    prevRoll1 = 0;
+    prevRoll2 = 0;
     return;
   }
-  prevRoll = diceNumber;
-  dice.hidden = false;
-  switch (diceNumber) {
+  prevRoll1 = diceNumber1;
+  prevRoll2 = diceNumber2;
+  dice1.hidden = false;
+  dice2.hidden = false;
+  switch (diceNumber1) {
     case 1:
       changePlayer();
-      dice.setAttribute("src", "dice-1.png");
+      dice1.setAttribute("src", "dice-1.png");
       break;
     default:
-      addCurrentScore(diceNumber);
-      dice.setAttribute("src", `dice-${diceNumber}.png`);
+      addCurrentScore(diceNumber1);
+      dice1.setAttribute("src", `dice-${diceNumber1}.png`);
+      break;
+  }
+  switch (diceNumber2) {
+    case 1:
+      changePlayer();
+      dice2.setAttribute("src", "dice-1.png");
+      break;
+    default:
+      addCurrentScore(diceNumber2);
+      dice2.setAttribute("src", `dice-${diceNumber2}.png`);
       break;
   }
 });
@@ -95,7 +115,8 @@ function changePlayer() {
   document.querySelector(".player-0-panel").classList.toggle("active");
   document.querySelector(".player-1-panel").classList.toggle("active");
   player1TurnFlag = !player1TurnFlag;
-  dice.hidden = true;
+  dice1.hidden = true;
+  dice2.hidden = true;
 }
 
 function winner() {
@@ -108,7 +129,9 @@ function winner() {
   holdBtn.hidden = true;
 }
 function start() {
-  dice.hidden = true;
+  dice1.hidden = true;
+  dice2.hidden = true;
+
   p1ScoreBox.textContent = 0;
   p2ScoreBox.textContent = 0;
   p1CurrentScore.textContent = 0;
