@@ -1,12 +1,3 @@
-/*
-GAME RULES:
-- The game has 2 players, playing in rounds
-- In each turn, a player rolls a dice as many times as he whishes. Each result get added to his ROUND score
-- BUT, if the player rolls a 1, all his ROUND score gets lost. After that, it's the next player's turn
-- The player can choose to 'Hold', which means that his ROUND score gets added to his GLBAL score. After that, it's the next player's turn
-- The first player to reach 100 points on GLOBAL score wins the game
-*/
-
 /**
  * Define Button
  */
@@ -17,18 +8,14 @@ let newBtn = document.querySelector(".btn-new"),
 /**
  * Define Player Object
  */
-let p1ScoreBox = document.querySelector(".player-0-panel .player-score"),
-  p2ScoreBox = document.querySelector(".player-1-panel .player-score");
+let p1ScoreBox = document.querySelector("#score-0"),
+  p2ScoreBox = document.querySelector("#score-1");
 
-let p1CurrentScore = document.querySelector(
-    ".player-0-panel .player-current-score"
-  ),
-  p2CurrentScore = document.querySelector(
-    ".player-1-panel .player-current-score"
-  );
+let p1CurrentScore = document.querySelector("#current-0"),
+  p2CurrentScore = document.querySelector("#current-1");
 
 let player1TurnFlag = true; // if true player1 has to play and if false player2 has to.
-
+let prevRoll = 0; //if a player bring two 6 after each other he lose all scores.
 /**
  * Define Dice
  */
@@ -43,32 +30,22 @@ newBtn.addEventListener("click", start);
 
 // Roll Dice
 rollBtn.addEventListener("click", (event) => {
-  let diceNumber = (parseInt(Math.random() * 10) % 6) + 1; // 1 <= number <= 6
+  let diceNumber = Math.floor(Math.random() * 6) + 1; // 1 <= number <= 6
+  if (prevRoll == diceNumber && diceNumber == 6) {
+    twoSix();
+    prevRoll = 0;
+    return;
+  }
+  prevRoll = diceNumber;
   dice.hidden = false;
   switch (diceNumber) {
     case 1:
       changePlayer();
       dice.setAttribute("src", "dice-1.png");
       break;
-    case 2:
-      addCurrentScore(2);
-      dice.setAttribute("src", "dice-2.png");
-      break;
-    case 3:
-      addCurrentScore(3);
-      dice.setAttribute("src", "dice-3.png");
-      break;
-    case 4:
-      addCurrentScore(4);
-      dice.setAttribute("src", "dice-4.png");
-      break;
-    case 5:
-      addCurrentScore(5);
-      dice.setAttribute("src", "dice-5.png");
-      break;
-    case 6:
-      addCurrentScore(6);
-      dice.setAttribute("src", "dice-6.png");
+    default:
+      addCurrentScore(diceNumber);
+      dice.setAttribute("src", `dice-${diceNumber}.png`);
       break;
   }
 });
@@ -100,6 +77,16 @@ function addCurrentScore(number) {
   }
 }
 
+function twoSix() {
+  alert("shit happend!!!");
+  if (player1TurnFlag) {
+    p1ScoreBox.textContent = 0;
+  } else {
+    p2ScoreBox.textContent = 0;
+  }
+  changePlayer();
+}
+
 function changePlayer() {
   p1CurrentScore.textContent = 0;
   p2CurrentScore.textContent = 0;
@@ -127,8 +114,6 @@ function start() {
 
   rollBtn.hidden = false;
   holdBtn.hidden = false;
-
-  // if(document.querySelector(".player-0-panel").className.includes('winner')){
 
   // }
   document.querySelector(".player-0-panel").classList.remove("winner");
