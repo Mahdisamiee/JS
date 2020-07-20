@@ -5,6 +5,8 @@ let newBtn = document.querySelector(".btn-new"),
   rollBtn = document.querySelector(".btn-roll"),
   holdBtn = document.querySelector(".btn-hold");
 
+let maxScore = document.getElementById("max-score");
+maxScore.value = 100;
 /**
  * Define Player Object
  */
@@ -56,12 +58,12 @@ holdBtn.addEventListener("click", (event) => {
     p1ScoreBox.textContent =
       +p1ScoreBox.textContent + +p1CurrentScore.textContent;
 
-    if (+p1ScoreBox.textContent >= 100) winner();
+    if (+p1ScoreBox.textContent >= maxScore.value) winner();
   } else {
     p2ScoreBox.textContent =
       +p2ScoreBox.textContent + +p2CurrentScore.textContent;
 
-    if (+p2ScoreBox.textContent >= 100) winner();
+    if (+p2ScoreBox.textContent >= maxScore.value) winner();
   }
   changePlayer();
 });
