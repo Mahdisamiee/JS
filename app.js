@@ -1,146 +1,64 @@
 /**
- * Define Button
+ * Define Dom Object
  */
-let newBtn = document.querySelector(".btn-new"),
-  rollBtn = document.querySelector(".btn-roll"),
-  holdBtn = document.querySelector(".btn-hold");
+let basket, resetBtn, startBtn, score, ball;
+basket = document.getElementById("basket");
+resetBtn = document.getElementById('reset');
+// score = document.getElementById('score');
+ball = document.getElementById("ball");
 
-let maxScore = document.getElementById("max-score");
-maxScore.value = 100;
 /**
- * Define Player Object
+ * Define Global variable
  */
-let p1ScoreBox = document.querySelector("#score-0"),
-  p2ScoreBox = document.querySelector("#score-1");
+let ballLeft = 0,
+  ballTop = 0,
+  speed = 0,
+  moveDown;
 
-let p1CurrentScore = document.querySelector("#current-0"),
-  p2CurrentScore = document.querySelector("#current-1");
+document.addEventListener("keydown", (event) => {
+  // console.log('event.code :>> ', event.code);
+  if (event.code == "ArrowLeft" || event.code == "ArrowRight") {
+    // console.log("event.code :>> ", event.code);
+    if (event.code == "ArrowLeft") moveBasket(1.7);
+    else moveBasket(3.3);
+  }
 
-let player1TurnFlag = true; // if true player1 has to play and if false player2 has to.
-let prevRoll1 = 0; //if a player bring two 6 after each other he lose all scores.
-let prevRoll2 = 0; //if a player bring two 6 after each other he lose all scores.
+  return;
+});
+
 /**
- * Define Dice
+ * Define Usefull Function
  */
-let dice1 = document.querySelector("#dice1");
-let dice2 = document.querySelector("#dice2");
-dice1.hidden = true;
-dice2.hidden = true;
-/**
- * Define Events
- */
-
-// Start New Game
-newBtn.addEventListener("click", start);
-
-// Roll Dice
-rollBtn.addEventListener("click", (event) => {
-  let diceNumber1 = Math.floor(Math.random() * 6) + 1; // 1 <= number <= 6
-  let diceNumber2 = Math.floor(Math.random() * 6) + 1; // 1 <= number <= 6
-  if (
-    (prevRoll1 == diceNumber1 && diceNumber1 == 6) ||
-    (prevRoll2 == diceNumber2 && diceNumber2 == 6)
+function moveBasket(size) {
+  // console.log("basket.style.left :>> ", basket.getBoundingClientRect().left);
+  basket.style.left = basket.getBoundingClientRect().left + 20 * size + "px";
+  if (basket.getBoundingClientRect().left <= 0) {
+    basket.style.left = 50 + "px";
+  } else if (
+    basket.getBoundingClientRect().right >= document.documentElement.clientWidth
   ) {
-    twoSix();
-    prevRoll1 = 0;
-    prevRoll2 = 0;
-    return;
-  }
-  prevRoll1 = diceNumber1;
-  prevRoll2 = diceNumber2;
-  dice1.hidden = false;
-  dice2.hidden = false;
-  switch (diceNumber1) {
-    case 1:
-      changePlayer();
-      dice1.setAttribute("src", "dice-1.png");
-      break;
-    default:
-      addCurrentScore(diceNumber1);
-      dice1.setAttribute("src", `dice-${diceNumber1}.png`);
-      break;
-  }
-  switch (diceNumber2) {
-    case 1:
-      changePlayer();
-      dice2.setAttribute("src", "dice-1.png");
-      break;
-    default:
-      addCurrentScore(diceNumber2);
-      dice2.setAttribute("src", `dice-${diceNumber2}.png`);
-      break;
-  }
-});
-
-// Hold Score
-holdBtn.addEventListener("click", (event) => {
-  if (player1TurnFlag) {
-    p1ScoreBox.textContent =
-      +p1ScoreBox.textContent + +p1CurrentScore.textContent;
-
-    if (+p1ScoreBox.textContent >= maxScore.value) winner();
-  } else {
-    p2ScoreBox.textContent =
-      +p2ScoreBox.textContent + +p2CurrentScore.textContent;
-
-    if (+p2ScoreBox.textContent >= maxScore.value) winner();
-  }
-  changePlayer();
-});
-
-/**
- * Define usefull function
- */
-function addCurrentScore(number) {
-  if (player1TurnFlag) {
-    p1CurrentScore.textContent = +p1CurrentScore.textContent + number;
-  } else {
-    p2CurrentScore.textContent = +p2CurrentScore.textContent + number;
+    basket.style.left = document.documentElement.clientWidth - 52 + "px";
   }
 }
 
-function twoSix() {
-  alert("shit happend!!!");
-  if (player1TurnFlag) {
-    p1ScoreBox.textContent = 0;
-  } else {
-    p2ScoreBox.textContent = 0;
-  }
-  changePlayer();
+function leftRandomMaker() {
+  // it shoukd make a randoam number for using in left and using in speed
+  let randNumber = Math.random() * 900;
+  ballLeft =
+    document.documentElement.clientWidth - 60 - randNumber > 10
+      ? document.documentElement.clientWidth - 60 - randNumber
+      : 10;
+
+  ball.style.left = ballLeft + "px";
 }
-
-function changePlayer() {
-  p1CurrentScore.textContent = 0;
-  p2CurrentScore.textContent = 0;
-  document.querySelector(".player-0-panel").classList.toggle("active");
-  document.querySelector(".player-1-panel").classList.toggle("active");
-  player1TurnFlag = !player1TurnFlag;
-  dice1.hidden = true;
-  dice2.hidden = true;
-}
-
-function winner() {
-  if (player1TurnFlag) {
-    document.querySelector(".player-0-panel").classList.add("winner");
-  } else {
-    document.querySelector(".player-1-panel").classList.add("winner");
-  }
-  rollBtn.hidden = true;
-  holdBtn.hidden = true;
-}
-function start() {
-  dice1.hidden = true;
-  dice2.hidden = true;
-
-  p1ScoreBox.textContent = 0;
-  p2ScoreBox.textContent = 0;
-  p1CurrentScore.textContent = 0;
-  p2CurrentScore.textContent = 0;
-
-  rollBtn.hidden = false;
-  holdBtn.hidden = false;
-
-  // }
-  document.querySelector(".player-0-panel").classList.remove("winner");
-  document.querySelector(".player-1-panel").classList.remove("winner");
+function speedRandMaker() {
+  let speed = (Math.random() + 1) * 100;
+  moveDown = setInterval(() => {
+    ball.style.top = ballTop + "px";
+    ballTop = ballTop + 10;
+    if (ballTop > document.documentElement.clientHeight - 19) {
+      clearInterval(moveDown);
+      console.log("ballTop :>> ", ballTop);
+    }
+  }, speed);
 }
