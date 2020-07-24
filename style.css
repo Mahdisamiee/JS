@@ -175,7 +175,7 @@ body {
 }
 
 .add__btn:active {
-  transform: translateY(2px);
+  transform: scale(0.95) translateY(2px);
 }
 
 .add__type:focus,
