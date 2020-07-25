@@ -61,8 +61,19 @@ let budgetController = (function () {
       console.log(data);
       return newItem;
     },
+
+    deleteItem(type, id) {
+      let ids, index;
+      ids = data.allItems[type].map((cur) => cur.id);
+      index = ids.indexOf(id);
+
+      if (index !== -1) {
+        data.allItems[type].splice(index, 1);
+      }
+    },
+
     // Calculate Budget
-    calculateBudget(params) {
+    calculateBudget() {
       // calculate total income and expenses
       calculateTotal("inc");
       calculateTotal("exp");
@@ -86,6 +97,7 @@ let budgetController = (function () {
         percentage: data.percentage,
       };
     },
+
     // Testing function
     simpleTest() {
       console.log(data);
@@ -109,6 +121,7 @@ let UIController = (function () {
     incomeLabel: ".budget__income--value",
     expensesLabel: ".budget__expenses--value",
     percentageLabel: ".budget__expenses--percentage",
+    container: ".container",
   };
 
   return {
@@ -128,7 +141,7 @@ let UIController = (function () {
       if (type === "inc") {
         element = DOMstrings.incomeContainer;
 
-        html = `<div class="item clearfix" id="income-${obj.id}">
+        html = `<div class="item clearfix" id="inc-${obj.id}">
                   <div class="item__description">${
                     obj.description[0].toUpperCase() + obj.description.slice(1)
                   }</div>
@@ -141,7 +154,7 @@ let UIController = (function () {
                 </div>`;
       } else if (type === "exp") {
         element = DOMstrings.expensesContainer;
-        html = `<div class="item clearfix" id="expense-${obj.id}">
+        html = `<div class="item clearfix" id="exp-${obj.id}">
                   <div class="item__description">${
                     obj.description[0].toUpperCase() + obj.description.slice(1)
                   }</div>
@@ -166,6 +179,11 @@ let UIController = (function () {
       document.querySelector(element).insertAdjacentHTML("beforeend", newHtml); // this method has som security problem
     },
 
+    deleteListItem(id) {
+      let element = document.querySelector("#" + id);
+      console.log(element);
+      element.remove();
+    },
     // delete the value of input and turn focus back on first input field
     clearFields() {
       //it's return a list . list is same as array but it havnt all nice method of array.
@@ -208,11 +226,16 @@ let controller = (function (budgetCtrl, UICtrl) {
   function setupEventListener() {
     let DOM = UICtrl.getDom();
     //**add event for ctrlAddItem function
-    document.querySelector(".add__btn").addEventListener("click", ctrlAddItem);
+    document.querySelector(DOM.inputBtn).addEventListener("click", ctrlAddItem);
     document.addEventListener("keydown", (event) => {
       if (event.keyCode != 13) return;
       ctrlAddItem();
     });
+
+    // add event delegation for delete button each item
+    document
+      .querySelector(DOM.container)
+      .addEventListener("click", ctrlDeleteItem);
   }
 
   function updateBudget() {
@@ -226,6 +249,13 @@ let controller = (function (budgetCtrl, UICtrl) {
     UICtrl.displayBudget(budget);
   }
 
+  function updatePercentages() {
+    // 1. Calculate Percentages
+    // 2. Read Percentagaes from the budget controller
+    // 3. Update the UI with the new Percentages
+  }
+
+  // controll add ew item
   function ctrlAddItem(params) {
     let input, newItem;
 
@@ -244,6 +274,33 @@ let controller = (function (budgetCtrl, UICtrl) {
 
       // 5- Calculate & update the Budget
       updateBudget();
+
+      // 6- Calculate and update percentages
+      updatePercentages();
+    }
+  }
+
+  // Control Delete items
+  function ctrlDeleteItem(event) {
+    let itemID, splitID, type, ID;
+    itemID = event.target.closest("div.item").id;
+
+    if (itemID) {
+      splitID = itemID.split("-");
+      type = splitID[0];
+      ID = parseInt(splitID[1]);
+
+      // 1. delete the Item from data structure
+      budgetCtrl.deleteItem(type, ID);
+
+      // 2. Delete the item from UI
+      UICtrl.deleteListItem(itemID);
+
+      // 3. Update and show the new budget
+      updateBudget();
+
+      // 4. Calculate and update percentages
+      updatePercentages();
     }
   }
 
