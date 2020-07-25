@@ -89,6 +89,15 @@ let budgetController = (function () {
       }
     },
 
+    calculatePercentages() {
+      if (data.totals["inc"] > 0) {
+        let percentages = data.allItems["exp"].map((el) =>
+          Math.round((el.value / data.totals["inc"]) * 100)
+        );
+        return percentages;
+      }
+    },
+
     getBudget() {
       return {
         budget: data.budget,
@@ -122,6 +131,7 @@ let UIController = (function () {
     expensesLabel: ".budget__expenses--value",
     percentageLabel: ".budget__expenses--percentage",
     container: ".container",
+    percentagesLabel: ".item__percentage",
   };
 
   return {
@@ -213,6 +223,15 @@ let UIController = (function () {
         obj.percentage > 0 ? "%" + obj.percentage : "---";
     },
 
+    updatePercentagesUI(arr) {
+      let expensesList = document.querySelector(DOMstrings.expensesContainer)
+        .children;
+      // console.log(expensesList);
+      [...expensesList].forEach((el, index) => {
+        el.querySelector(DOMstrings.percentagesLabel).textContent = arr[index];
+      });
+    },
+
     getDom() {
       return DOMstrings;
     },
@@ -250,9 +269,14 @@ let controller = (function (budgetCtrl, UICtrl) {
   }
 
   function updatePercentages() {
+    let percentagesArr;
     // 1. Calculate Percentages
-    // 2. Read Percentagaes from the budget controller
+    // ..
+    // 2. Read Percentagaes from the budget controller.
+    percentagesArr = budgetCtrl.calculatePercentages();
+    console.log(percentagesArr);
     // 3. Update the UI with the new Percentages
+    UICtrl.updatePercentagesUI(percentagesArr);
   }
 
   // controll add ew item
