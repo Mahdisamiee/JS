@@ -76,6 +76,7 @@ let UIController = (function () {
       };
     },
 
+    // add new item to dom.
     addListItem(obj, type) {
       let html, newHtml, element;
       // make html code
@@ -121,6 +122,7 @@ let UIController = (function () {
       document.querySelector(element).insertAdjacentHTML("beforeend", newHtml); // this method has som security problem
     },
 
+    // delete the value of input and turn focus back on first input field
     clearFields() {
       //it's return a list . list is same as array but it havnt all nice method of array.
       let fields = document.querySelectorAll(
@@ -162,18 +164,20 @@ let controller = (function (budgetCtrl, UICtrl) {
 
     // 2- Add the item to budget Controller
     Object.keys(input).map((el) => {
-      //this part is for chck to our filed be filled.
+      //this part is for check that our filed be filled.
       if (input[el].trim == "") {
         // retrun error
         return;
       }
     });
     newItem = budgetCtrl.addItem(input);
+
     // 3- Add the Item to UI
     UICtrl.addListItem(newItem, input.type);
 
     // 4- Clear Fields
     UICtrl.clearFields();
+
     // 5- Calculate the Budget
 
     // 6- Display the Budget on the UI
