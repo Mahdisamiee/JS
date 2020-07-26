@@ -90,12 +90,15 @@ let budgetController = (function () {
     },
 
     calculatePercentages() {
+      let percentages;
       if (data.totals["inc"] > 0) {
-        let percentages = data.allItems["exp"].map((el) =>
+        percentages = data.allItems["exp"].map((el) =>
           Math.round((el.value / data.totals["inc"]) * 100)
         );
-        return percentages;
+      } else {
+        percentages = [];
       }
+      return percentages;
     },
 
     getBudget() {
@@ -228,7 +231,12 @@ let UIController = (function () {
         .children;
       // console.log(expensesList);
       [...expensesList].forEach((el, index) => {
-        el.querySelector(DOMstrings.percentagesLabel).textContent = arr[index];
+        if (arr.length > 0) {
+          el.querySelector(DOMstrings.percentagesLabel).textContent =
+            arr[index] + "%";
+        } else {
+          el.querySelector(DOMstrings.percentagesLabel).textContent = "--";
+        }
       });
     },
 
@@ -269,7 +277,7 @@ let controller = (function (budgetCtrl, UICtrl) {
   }
 
   function updatePercentages() {
-    let percentagesArr;
+    let percentagesArr = [];
     // 1. Calculate Percentages
     // ..
     // 2. Read Percentagaes from the budget controller.
