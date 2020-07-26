@@ -149,8 +149,21 @@ let UIController = (function () {
     percentageLabel: ".budget__expenses--percentage",
     container: ".container",
     percentagesLabel: ".item__percentage",
-    // budgetTitleMonth: ".budget__title--month",
+    date: ".budget__title--month",
   };
+
+  // to change format of number.
+  function formatNumber(num) {
+    num = num.toFixed(2);
+
+    num = num.split(".");
+    let int = num[0],
+      float = num[1];
+
+    let semi = parseInt(int).toLocaleString();
+
+    return semi + "." + float;
+  }
 
   return {
     getInput() {
@@ -174,7 +187,9 @@ let UIController = (function () {
                     obj.description[0].toUpperCase() + obj.description.slice(1)
                   }</div>
                   <div class="right clearfix">
-                      <div class="item__value">+ ${obj.value}</div>
+                      <div class="item__value">+ ${formatNumber(
+                        obj.value
+                      )}</div>
                       <div class="item__delete">
                           <button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button>
                       </div>
@@ -187,7 +202,9 @@ let UIController = (function () {
                     obj.description[0].toUpperCase() + obj.description.slice(1)
                   }</div>
                   <div class="right clearfix">
-                      <div class="item__value">- ${obj.value}</div>
+                      <div class="item__value">- ${formatNumber(
+                        obj.value
+                      )}</div>
                       <div class="item__percentage">10%</div>
                       <div class="item__delete">
                           <button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button>
@@ -209,7 +226,6 @@ let UIController = (function () {
 
     deleteListItem(id) {
       let element = document.querySelector("#" + id);
-      console.log(element);
       element.remove();
     },
     // delete the value of input and turn focus back on first input field
@@ -253,16 +269,31 @@ let UIController = (function () {
         }
       });
     },
-    /**
- * 
- * 
+
     // display Month
     setMonthUI() {
-      let month = new Date().toDateString().split(" ")[1];
-      document.querySelector(DOMstrings.budgetTitleMonth).textContent = month;
-      console.log(month);
+      let fullyear = new Date().toDateString().split(" ");
+      document.querySelector(DOMstrings.date).textContent =
+        fullyear[1] + " " + fullyear[3];
     },
- */
+
+    // changed type
+    changedType() {
+      let fields = document.querySelectorAll(
+        DOMstrings.inputType +
+          "," +
+          DOMstrings.inputDescription +
+          "," +
+          DOMstrings.inputValue
+      );
+
+      [...fields].forEach((cur) => {
+        cur.classList.toggle("red-focus");
+      });
+
+      document.querySelector(DOMstrings.inputBtn).classList.toggle("red");
+    },
+
     getDom() {
       return DOMstrings;
     },
@@ -286,6 +317,11 @@ let controller = (function (budgetCtrl, UICtrl) {
     document
       .querySelector(DOM.container)
       .addEventListener("click", ctrlDeleteItem);
+
+    // input type change event for change color
+    document
+      .querySelector(DOM.inputType)
+      .addEventListener("change", UICtrl.changedType);
   }
 
   function updateBudget() {
@@ -303,24 +339,14 @@ let controller = (function (budgetCtrl, UICtrl) {
     let percentagesArr;
     // 1. Calculate Percentages
     budgetCtrl.calculatePercentages();
+
     // 2. Read Percentagaes from the budget controller.
     percentagesArr = budgetCtrl.getPercentages();
-    console.log(percentagesArr);
+
     // 3. Update the UI with the new Percentages
     UICtrl.dispalyPercentagesUI(percentagesArr);
   }
-  /**
-  function updatePercentages() {
-    let percentagesArr = [];
-    // 1. Calculate Percentages
-    // ..
-    // 2. Read Percentagaes from the budget controller.
-    percentagesArr = budgetCtrl.calculatePercentages();
-    console.log(percentagesArr);
-    // 3. Update the UI with the new Percentages
-    UICtrl.dispalyPercentagesUI(percentagesArr);
-  }
-  */
+
   // controll add new item
   function ctrlAddItem(params) {
     let input, newItem;
@@ -349,7 +375,7 @@ let controller = (function (budgetCtrl, UICtrl) {
   // Control Delete items
   function ctrlDeleteItem(event) {
     let itemID, splitID, type, ID;
-    itemID = event.target.closest("div.item").id;
+    itemID = event.target.closest("div.item")?.id;
 
     if (itemID) {
       splitID = itemID.split("-");
@@ -379,7 +405,7 @@ let controller = (function (budgetCtrl, UICtrl) {
         totalExp: 0,
         percentage: 0,
       });
-      // UICtrl.setMonthUI();
+      UICtrl.setMonthUI();
       setupEventListener();
     },
   };
