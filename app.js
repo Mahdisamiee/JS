@@ -135,6 +135,7 @@ let UIController = (function () {
     percentageLabel: ".budget__expenses--percentage",
     container: ".container",
     percentagesLabel: ".item__percentage",
+    budgetTitleMonth: ".budget__title--month",
   };
 
   return {
@@ -226,7 +227,8 @@ let UIController = (function () {
         obj.percentage > 0 ? "%" + obj.percentage : "---";
     },
 
-    updatePercentagesUI(arr) {
+    // display pecentage of each "exp" in it's box
+    dispalyPercentagesUI(arr) {
       let expensesList = document.querySelector(DOMstrings.expensesContainer)
         .children;
       // console.log(expensesList);
@@ -238,6 +240,13 @@ let UIController = (function () {
           el.querySelector(DOMstrings.percentagesLabel).textContent = "--";
         }
       });
+    },
+
+    // display Month
+    setMonthUI() {
+      let month = new Date().toDateString().split(" ")[1];
+      document.querySelector(DOMstrings.budgetTitleMonth).textContent = month;
+      console.log(month);
     },
 
     getDom() {
@@ -259,7 +268,7 @@ let controller = (function (budgetCtrl, UICtrl) {
       ctrlAddItem();
     });
 
-    // add event delegation for delete button each item
+    // add event delegation for delete button in each item
     document
       .querySelector(DOM.container)
       .addEventListener("click", ctrlDeleteItem);
@@ -284,7 +293,7 @@ let controller = (function (budgetCtrl, UICtrl) {
     percentagesArr = budgetCtrl.calculatePercentages();
     console.log(percentagesArr);
     // 3. Update the UI with the new Percentages
-    UICtrl.updatePercentagesUI(percentagesArr);
+    UICtrl.dispalyPercentagesUI(percentagesArr);
   }
 
   // controll add ew item
@@ -345,6 +354,7 @@ let controller = (function (budgetCtrl, UICtrl) {
         totalExp: 0,
         percentage: 0,
       });
+      UICtrl.setMonthUI();
       setupEventListener();
     },
   };
