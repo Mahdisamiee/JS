@@ -1,14 +1,181 @@
-let box = {
-  color: "green",
-  position: 1,
-  clickme() {
-    document.querySelector(".green").addEventListener("click", (event) => {
-      console.log(
-        "this is " + this.position + " box and its color is " + this.color
-      );
-    });
-  },
-};
+// let box = {
+//   color: "green",
+//   position: 1,
+//   clickme() {
+//     document.querySelector(".green").addEventListener("click", (event) => {
+//       console.log(
+//         "this is " + this.position + " box and its color is " + this.color
+//       );
+//     });
+//   },
+// };
 
-box.clickme();
-//output:>> this is 1 box and its color is green.
+// box.clickme();
+// //output:>> this is 1 box and its color is green.
+
+// Destructuring
+
+// let obj = {
+//   name : "hasan",
+//   lastname: "sami",
+//   age: 61
+// }
+
+// const {name, lastname, age} = obj;
+
+// console.log(name, lastname, age)
+// "hasan"  "sami" 61
+
+// function func(year) {
+//   let name = "mahdi";
+//   let date = new Date().getFullYear();
+
+//   return [name, date - year];
+// }
+
+// const [name, age] = func(1999);
+// console.log(name, age);
+
+// // mahdi 21
+
+// Array
+// let nodeList = document.querySelectorAll('.box');
+// //ES6
+// let arr2= Array.from(nodeList)
+// // or
+// let arr3 = [...arr];
+// // (3) [div.box.green, div.box.blue, div.box.orange]
+
+// let arr = [10, 11, 13, 14, 18, 21, 20, 16];;
+
+// // for find index of a value that have some condition
+// arr.findIndex((cur)=> cur >= 18) // the indexof first value that is greather or equal to 18.
+// arr.find((cur)=> cur >= 18) // the first value of arr that is greater that 18.
+// let map = new Map();
+// Map.prototype.myfunc = function () {
+//   for (let [key, value] of this.entries()) {
+//     if (typeof key === "number") {
+//       console.log(`answer ${key} : ${value}`);
+//     }
+//   }
+// };
+
+// map.set("question", "what is your favorite app?");
+// map.set(1, "its not your biusnise");
+// map.set(2, "fuck you");
+// map.set(3, "ffdf");
+// // map.set('question', 'what is your favorite app?')
+// map.myfunc();
+
+// function Person5(name, lastname) {
+//   this.name = name;
+//   this.lastname = lastname;
+// }
+
+// Person5.prototype.m2 = function () {
+//   console.log("hey2");
+// };
+
+// let obj = new Person5("mahi", "samieenai");
+
+/**
+ * coding chanllange
+ */
+
+class TownBuilding {
+  constructor(name, buildYear) {
+    this.name = name;
+    this.buildYear = buildYear;
+  }
+}
+
+class Park extends TownBuilding {
+  constructor(name, buildYear, treesNum, parkArea) {
+    super(name, buildYear);
+    this.treesNum = treesNum;
+    this.parkArea = parkArea;
+  }
+
+  treeDensity() {
+    return this.treesNum / this.parkArea;
+  }
+}
+
+class Street extends TownBuilding {
+  constructor(name, buildYear, length, size = "normal") {
+    super(name, buildYear);
+    this.length = length;
+    this.size = size;
+  }
+}
+
+let park1 = new Park("shohada", "1999", 200, 1);
+let park2 = new Park("laleh", "1990", 2000, 8);
+let park3 = new Park("pirmard", "2003", 10, 0.5);
+
+let street1 = new Street("imam khomeiny", "1970", 2, "big");
+let street2 = new Street("20 metry", "1985", 1.5);
+let street3 = new Street("shahid beheshti", "1990", 1.7, "big");
+let street4 = new Street("asli", "1999", 3, "huge");
+
+function report() {
+  let parkMap = new Map();
+  parkMap.set(1, park1);
+  parkMap.set(2, park2);
+  parkMap.set(3, park3);
+
+  let streetMap = new Map();
+  streetMap.set(1, street1);
+  streetMap.set(2, street2);
+  streetMap.set(3, street3);
+  streetMap.set(4, street4);
+
+  parkReport(parkMap);
+  streetReport(streetMap);
+}
+
+function parkReport(map) {
+  console.log("-----Parks Report-----");
+  let total = 0;
+  let parkover1000 = [];
+  let date = new Date().getFullYear();
+  map.forEach((cur) => {
+    total += date - cur.buildYear;
+    if (cur.treesNum >= 1000) {
+      parkover1000.push(cur.name);
+    }
+  });
+  console.log(
+    `our ${map.size} park have average age of ${total / map.size} years.`
+  );
+  map.forEach((cur) => {
+    console.log(
+      `${
+        cur.name
+      } park has a tree density of ${cur.treeDensity()} trees per square km`
+    );
+  });
+  for (let cur of parkover1000) {
+    console.log(`${cur} park has more than 1000 trees`);
+  }
+}
+
+function streetReport(map) {
+  console.log("-----Street Report-----");
+  let total = 0;
+  map.forEach((cur) => {
+    total += cur.length;
+  });
+  console.log(
+    `our ${map.size} street have an average of ${
+      total / map.size
+    } km and a total size of ${total}`
+  );
+  map.forEach((cur) => {
+    console.log(
+      `${cur.name} street, build in ${cur.buildYear}, is a ${cur.size} street`
+    );
+  });
+}
+
+report();
