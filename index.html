@@ -8,6 +8,61 @@
 <body>
     <h1>Asynchronous JavaScript</h1>
     <script>
-        
+       const getID = new Promise((resolve, reject)=>{
+         setTimeout(() => {
+           resolve([120,432,987,2323]);
+         }, 1500);
+       }) 
+
+       const getRecipe = (ID) => {
+         return new Promise((resolve, reject)=>{
+          setTimeout((id) => {
+           const recipe = {title: "get new pitzza", publisher: 'mahdi samieenia'};
+           resolve(`${id}: ${recipe.title}`);
+          }, 1500, ID);
+         })
+       }
+
+       const getRelated = (publisher)=>{
+         return new Promise((resolve, reject)=>{
+           setTimeout((pub) => {
+            const recipe = {title: "doing", publisher: 'mahdi samieenia'};
+            resolve(`${pub} : ${recipe.title}`);
+            // reject(new Error("gogh"))
+           }, 1500, publisher);
+         })
+       }
+
+      //  getID.then((response)=>{
+      //    console.log(response);
+      //    return getRecipe(response[2]);
+      //  }).then((recipe)=>{
+      //    console.log(recipe);
+      //    return getRelated('mahdi samieenia');
+      //  }).then((recipe)=>{
+      //    console.log(recipe);
+      //  })
+      //  .catch((err)=>{
+      //    console.error(err);
+      //  })
+        async function getRecipes() {
+          let ID = await getID
+          console.log(ID);
+          let recipe = await getRecipe(ID[2]);
+          console.log(recipe);
+          let related = await getRelated("mahdi samieenia");
+          console.log(related);
+          return "done"
+        }
+
+        getRecipes()
+        .then(result => console.log(result))
+        .catch((err)=> console.log(err.message))
+
+
+
+
+
+
     </script>
 </html>
