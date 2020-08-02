@@ -13,7 +13,9 @@ import * as searchViews from "./views/searchView";
  */
 const state = {};
 
-// function for search bar.
+/**  *********************************************************************************************
+ * functions for search bar.
+ */
 async function controlSearch() {
   // 1- get query from view
   const query = searchViews.getInput();
@@ -39,3 +41,17 @@ elements.searchForm.addEventListener("submit", (event) => {
   event.preventDefault();
   controlSearch();
 });
+
+elements.searchResPages.addEventListener("click", (event) => {
+  const target = event.target.closest("button[data-goto]");
+  if (!target) return;
+  searchViews.clearResults();
+  searchViews.renderResults(state.search.result, +target.dataset.goto);
+});
+
+/** ***********************************************************************************************************
+ *
+ *
+ *
+ *
+ */

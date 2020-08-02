@@ -7,7 +7,7 @@ export const clearInput = () => {
 };
 
 export const clearResults = () => {
-  elements.searchPage.innerHTML = "";
+  elements.searchResPages.innerHTML = "";
   while (!!elements.searchResList.lastElementChild) {
     elements.searchResList.lastChild.remove();
   }
@@ -39,33 +39,37 @@ const renderRecipe = (recipe) => {
   elements.searchResList.insertAdjacentHTML("beforeend", markup);
 };
 
-const renderButtons = (page) => {
-  const prevbtn = `
-    <button class="btn-inline results__btn--prev" data-page= "${page - 1}">
+const createButton = (page, type) => `
+  <button class="btn-inline results__btn--${type}" data-goto = ${
+  type === "prev" ? page - 1 : page + 1
+}>
+      <span>Page ${type === "prev" ? page - 1 : page + 1}</span>
       <svg class="search__icon">
-          <use href="img/icons.svg#icon-triangle-left"></use>
+          <use href="img/icons.svg#icon-triangle-${
+            type === "prev" ? "left" : "right"
+          }"></use>
       </svg>
-      <span>Page ${page - 1}</span>
-    </button>
-  `;
-  const nextbtn = `
-    <button class="btn-inline results__btn--next" data-page= "${page + 1}">
-      <span>Page ${page + 1}</span>
-      <svg class="search__icon">
-          <use href="img/icons.svg#icon-triangle-right"></use>
-      </svg>
-    </button>
-  `;
-  return [prevbtn, nextbtn];
-};
-const eventButton = (recipes) => {
-  elements.searchPage.addEventListener("click", (event) => {
-    let target = event.target.closest("button[data-page]");
-    if (!target) return;
+  </button>
+`;
 
-    clearResults();
-    renderResults(recipes, +target.dataset.page);
-  });
+const renderButtons = (page, numResults, resPerPage) => {
+  const pages = Math.ceil(numResults / resPerPage);
+
+  let button;
+  if (page === 1 && pages > 1) {
+    // just show next btn
+    button = createButton(page, "next");
+  } else if (page < pages) {
+    // both show
+    button = `
+    ${createButton(page, "next")}
+    ${createButton(page, "prev")}
+    `;
+  } else if (page === pages && pages > 1) {
+    // just show prev btn
+    button = createButton(page, "prev");
+  }
+  elements.searchResPages.insertAdjacentHTML("afterbegin", button);
 };
 
 export const renderResults = (recipes, page = 1, resPerPage = 10) => {
@@ -74,12 +78,5 @@ export const renderResults = (recipes, page = 1, resPerPage = 10) => {
 
   recipes.slice(start, end).forEach(renderRecipe);
 
-  const [prev, next] = renderButtons(page);
-  if (page == 1 || page * resPerPage < recipes.length) {
-    elements.searchPage.insertAdjacentHTML("afterbegin", next);
-  }
-  if (page > 1) {
-    elements.searchPage.insertAdjacentHTML("afterbegin", prev);
-  }
-  eventButton(recipes);
+  renderButtons(page, recipes.length, resPerPage);
 };
