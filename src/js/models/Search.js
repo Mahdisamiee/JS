@@ -11,9 +11,9 @@ export default class Search {
 
     try {
       const res = await axios(
-        `https://api.edamam.com/search?q=${this.query}&app_id=${app_id}&app_key=${app_key}`
+        `https://cors-anywhere.herokuapp.com/https://api.edamam.com/search?q=${this.query}&app_id=${app_id}&app_key=${app_key}&to=30`
       );
-      this.result = res.data.hits;
+      this.result = res.data.hits.map((cur) => cur.recipe); // * it return just array of object
     } catch (error) {
       console.log(error.message);
     }
