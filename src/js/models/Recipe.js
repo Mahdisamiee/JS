@@ -52,10 +52,8 @@ export default class Recipe {
       "tsp",
       "cup",
       "pound",
-      "g",
-      "x",
-      "pinch",
     ];
+    const unit = [...unitsShort, "g", "x", "pinch"];
     const newIngredients = this.ingredients.map((el) => {
       // 1) Uniform units
       let ingredient = el.toLowerCase();
@@ -67,8 +65,43 @@ export default class Recipe {
       ingredient = ingredient.replace(/ *\([^)]*\) */g, "");
 
       // 3) Parse ingredients into count, unit and ingredient
+      let arrIng = ingredient.split(" ");
+      let unitIndex = arrIng.findIndex((el) => unit.includes(el));
 
-      return ingredient;
+      let objIng;
+      if (unitIndex > -1) {
+        // we have num and unit ...
+        let countArr = arrIng.slice(0, unitIndex);
+        let count;
+        if (countArr.length == 1) {
+          count = eval(countArr[0]);
+        } else {
+          count = countArr.reduce((acc, cur) => {
+            return acc + eval(cur);
+          }, 0);
+        }
+        objIng = {
+          count,
+          unit: arrIng[unitIndex],
+          ingredient: arrIng.slice(unitIndex + 1).join(" "),
+        };
+      } else if (parseInt(arrIng[0], 10)) {
+        // we didnt have unit but we have number
+        objIng = {
+          count: parseInt(arrIng[0], 10),
+          unit: "",
+          ingredient: ingredient.slice(1).join(" "),
+        };
+      } else if (unitIndex === -1) {
+        // we didnt have unit
+        objIng = {
+          count: 1,
+          unit: "",
+          ingredient,
+        };
+      }
+
+      return objIng;
     });
     this.ingredients = newIngredients;
   }

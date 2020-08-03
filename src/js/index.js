@@ -3,9 +3,9 @@ import { elements, renderLoader, clearLoader } from "./views/base";
 import Search from "./models/Search";
 import * as searchViews from "./views/searchView";
 
-//
+// Recipe
 import Recipe from "./models/Recipe";
-
+import * as recipeView from "./views/recipeView";
 /** Define Global State
  * - Search Object
  * - Current recipe Object
@@ -19,8 +19,7 @@ const state = {};
  */
 async function controlSearch() {
   // 1- get query from view
-  // const query = searchViews.getInput();
-  const query = "pizza";
+  const query = searchViews.getInput();
   if (query) {
     // 2) New search object and add to state;
     state.search = new Search(query);
@@ -44,16 +43,10 @@ async function controlSearch() {
   }
 }
 
-// elements.searchForm.addEventListener("submit", (event) => {
-//   event.preventDefault();
-//   controlSearch();
-// });
-
-//TEST
-window.addEventListener(
-  "load",
-  controlSearch
-); /****************************** */
+elements.searchForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  controlSearch();
+});
 
 elements.searchResPages.addEventListener("click", (event) => {
   const target = event.target.closest("button[data-goto]");
@@ -72,24 +65,27 @@ async function controlRecipe(event) {
 
   if (id) {
     // Prepare UI for change
+    recipeView.clearRecipe();
+    renderLoader(elements.recipe);
+    if (state.search) recipeView.highlightedSelected(id);
 
     // Create recipe object
     state.recipe = new Recipe(id);
 
-    //test
-    window.r = state.recipe;
-
     try {
-      // Get recipe data
+      // Get recipe data and make Ingredients uniform
       await state.recipe.getRecipe();
+      state.recipe.parseIngredients();
 
       // Calc servings time
       state.recipe.calcTime();
       state.recipe.calcServings();
 
       // Render recipe
-      console.log(state.recipe);
+      clearLoader();
+      recipeView.renderRecipe(state.recipe);
     } catch (error) {
+      clearLoader();
       console.error(error.messge);
     }
   }
