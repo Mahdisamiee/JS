@@ -32,6 +32,9 @@ export default class Recipe {
     this.servings = 4;
   }
 
+  /**
+   * change this.ingredient to {count , unit, ingredent}
+   */
   parseIngredients() {
     const unitsLong = [
       "tablespoons",
@@ -104,5 +107,17 @@ export default class Recipe {
       return objIng;
     });
     this.ingredients = newIngredients;
+  }
+
+  updateServings(type) {
+    // servings
+    const newServings = type == "dec" ? this.servings - 1 : this.servings + 1;
+
+    // ingredient
+    this.ingredients.forEach((ing) => {
+      ing.count *= newServings / this.servings;
+    });
+
+    this.servings = newServings;
   }
 }
