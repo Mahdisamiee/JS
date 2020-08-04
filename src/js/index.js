@@ -13,7 +13,7 @@ import * as listView from "./views/listView";
 
 // Likes
 import Likes from "./models/Likes";
-
+import * as likesView from "./views/likesView";
 /** Define Global State
  * - Search Object
  * - Current recipe Object
@@ -93,7 +93,7 @@ async function controlRecipe(event) {
 
       // Render recipe
       clearLoader();
-      recipeView.renderRecipe(state.recipe);
+      recipeView.renderRecipe(state.recipe, state.likes.isLiked(id));
     } catch (error) {
       clearLoader();
       console.error(error.messge);
@@ -147,6 +147,8 @@ elements.shopping.addEventListener("click", (event) => {
  * Like part
  *
  */
+
+state.likes = new Likes();
 function controlLike() {
   // Create like if its not been yet
   if (!state.likes) state.likes = new Likes();
@@ -163,17 +165,26 @@ function controlLike() {
     );
 
     // toggle like button class
+    likesView.toggleLikeBtn(false);
+
+    // Prepare Like Menu
 
     // Add like to like list
     console.log(state.likes);
+    likesView.renderLike(like);
   } else {
     // remove recipe to likes
     state.likes.deleteLike(currentID);
+
     // toggle like button class
+    likesView.toggleLikeBtn(true);
 
     // Remove like from like list
     console.log(state.Likes);
+    likesView.deleteLike(currentID);
   }
+
+  likesView.toggleLikeMenu(state.likes.getNumLikes());
 }
 
 // event listener for everything that is in recipe page.
