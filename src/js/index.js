@@ -9,6 +9,7 @@ import * as recipeView from "./views/recipeView";
 
 // List shopping
 import List from "./models/List";
+import * as listView from "./views/listView";
 
 /** Define Global State
  * - Search Object
@@ -19,7 +20,7 @@ import List from "./models/List";
 const state = {};
 
 //--------------------------------------------------------------------------------------
-/** Search 
+/** Search
  * functions for search bar.
  */
 async function controlSearch() {
@@ -103,6 +104,39 @@ async function controlRecipe(event) {
   window.addEventListener(event, controlRecipe)
 );
 
+/**Shopping
+ * Shopping List
+ */
+function controlList() {
+  // create list if it is not yet create.
+  if (!state.list) {
+    state.list = new List();
+  }
+
+  state.list.clearItems();
+  // Add ingredinet to list
+  state.recipe.ingredients.forEach((ing, i) => {
+    state.list.addItem(ing.count, ing.unit, ing.ingredient);
+  });
+
+  // prepare UI to sho list
+  listView.clearList();
+
+  // Render List
+  state.list.items.forEach((item) => listView.renderItem(item));
+}
+
+elements.shopping.addEventListener("click", (event) => {
+  let target = event.target.closest("button.shopping__delete");
+  console.log(target);
+  if (target) {
+    let id = target.closest("li").dataset.itemid;
+    console.log(id);
+    state.list.deleteItem(id);
+    listView.deleteItem(id);
+  }
+});
+
 // event listener for increase and decrease btn .
 // it can change number of servings
 // and count of each ingredient for that number of people
@@ -114,20 +148,10 @@ elements.recipe.addEventListener("click", (event) => {
       state.recipe.updateServings("dec");
       recipeView.updateRecipeIngredinets(state.recipe);
     }
-  }
-  if (target.matches(".btn-increase, .btn-increase *")) {
+  } else if (target.matches(".btn-increase, .btn-increase *")) {
     state.recipe.updateServings("inc");
     recipeView.updateRecipeIngredinets(state.recipe);
+  } else if (target.matches(".recipe__btn--add, .recipe__btn--add *")) {
+    controlList();
   }
 });
-
-//--------------------------------------------------------------------------------------
-/**Shopping
- * Shopping List
- */
-state.list = new List();
-state.list.addItem(10, "g", "somehtinfd fgnsdfng");
-state.list.addItem(3, "tsp", "new stuff");
-state.list.addItem(1, "cup", "for teasete");
-state.list.addItem(50, "g", "somehtinfd fgnsdfng");
-window.r = state.list;

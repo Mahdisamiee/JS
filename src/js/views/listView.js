@@ -4,7 +4,7 @@ export const renderItem = (item) => {
   const markup = `
     <li class="shopping__item" data-itemid = "${item.id}">
         <div class="shopping__count">
-            <input type="number" value="${item.value}" step="${item.value}" class = "shopping__item--value">
+            <input type="number" value="${item.count}" step="${item.count}" class = "shopping__item--value">
             <p>${item.unit}</p>
         </div>
         <p class="shopping__description">${item.ingredient}</p>
@@ -21,4 +21,9 @@ export const renderItem = (item) => {
 
 export const deleteItem = (id) => {
   document.querySelector(`li.shopping__item[data-itemid = "${id}"]`).remove();
+};
+
+export const clearList = () => {
+  elements.shopping.innerHTML = "";
+  console.log("deleted");
 };
