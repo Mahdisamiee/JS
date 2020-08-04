@@ -18,7 +18,7 @@ import * as listView from "./views/listView";
  * - Liked recipe
  */
 const state = {};
-
+window.state = state;
 //--------------------------------------------------------------------------------------
 /** Search
  * functions for search bar.
@@ -112,28 +112,31 @@ function controlList() {
   if (!state.list) {
     state.list = new List();
   }
-
-  state.list.clearItems();
-  // Add ingredinet to list
-  state.recipe.ingredients.forEach((ing, i) => {
-    state.list.addItem(ing.count, ing.unit, ing.ingredient);
-  });
-
-  // prepare UI to sho list
+  // prepare UI and list model to show list
   listView.clearList();
+  state.list.clearItems();
 
-  // Render List
-  state.list.items.forEach((item) => listView.renderItem(item));
+  // Add ingredinet to list model and UI
+  state.recipe.ingredients.forEach((ing) => {
+    const item = state.list.addItem(ing.count, ing.unit, ing.ingredient);
+    listView.renderItem(item);
+  });
 }
 
+// event for delete button in shop list
 elements.shopping.addEventListener("click", (event) => {
-  let target = event.target.closest("button.shopping__delete");
-  console.log(target);
-  if (target) {
+  let target = event.target;
+  //Handle delete button
+  if (target.closest("button.shopping__delete")) {
     let id = target.closest("li").dataset.itemid;
-    console.log(id);
     state.list.deleteItem(id);
     listView.deleteItem(id);
+
+    // Handle change value
+  } else if (target.closest(".shopping__item--value")) {
+    const newValue = parseFloat(target.value);
+    const id = target.closest("li").dataset.itemid;
+    state.list.updateCount(id, newValue);
   }
 });
 
