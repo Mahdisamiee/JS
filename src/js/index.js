@@ -11,6 +11,9 @@ import * as recipeView from "./views/recipeView";
 import List from "./models/List";
 import * as listView from "./views/listView";
 
+// Likes
+import Likes from "./models/Likes";
+
 /** Define Global State
  * - Search Object
  * - Current recipe Object
@@ -140,9 +143,42 @@ elements.shopping.addEventListener("click", (event) => {
   }
 });
 
-// event listener for increase and decrease btn .
-// it can change number of servings
-// and count of each ingredient for that number of people
+/**
+ * Like part
+ *
+ */
+function controlLike() {
+  // Create like if its not been yet
+  if (!state.likes) state.likes = new Likes();
+  const currentID = state.recipe.id;
+
+  // not liked yet
+  if (!state.likes.isLiked(currentID)) {
+    // Add recipe to likes
+    const like = state.likes.addLike(
+      currentID,
+      state.recipe.title,
+      state.recipe.author,
+      state.recipe.img
+    );
+
+    // toggle like button class
+
+    // Add like to like list
+    console.log(state.likes);
+  } else {
+    // remove recipe to likes
+    state.likes.deleteLike(currentID);
+    // toggle like button class
+
+    // Remove like from like list
+    console.log(state.Likes);
+  }
+}
+
+// event listener for everything that is in recipe page.
+//
+//
 
 elements.recipe.addEventListener("click", (event) => {
   const target = event.target;
@@ -154,7 +190,13 @@ elements.recipe.addEventListener("click", (event) => {
   } else if (target.matches(".btn-increase, .btn-increase *")) {
     state.recipe.updateServings("inc");
     recipeView.updateRecipeIngredinets(state.recipe);
+
+    // adding shop list
   } else if (target.matches(".recipe__btn--add, .recipe__btn--add *")) {
     controlList();
+
+    // adding like controll
+  } else if (target.matches(".recipe__love , .recipe__love *")) {
+    controlLike();
   }
 });
