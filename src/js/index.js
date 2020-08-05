@@ -2,15 +2,12 @@ import { elements, renderLoader, clearLoader } from "./views/base";
 // Search Bar files
 import Search from "./models/Search";
 import * as searchViews from "./views/searchView";
-
 // Recipe
 import Recipe from "./models/Recipe";
 import * as recipeView from "./views/recipeView";
-
 // List shopping
 import List from "./models/List";
 import * as listView from "./views/listView";
-
 // Likes
 import Likes from "./models/Likes";
 import * as likesView from "./views/likesView";
@@ -21,7 +18,6 @@ import * as likesView from "./views/likesView";
  * - Liked recipe
  */
 const state = {};
-window.state = state;
 //--------------------------------------------------------------------------------------
 /** Search
  * functions for search bar.
@@ -147,7 +143,6 @@ elements.shopping.addEventListener("click", (event) => {
  * Like part
  *
  */
-
 function controlLike() {
   // Create like if its not been yet
   if (!state.likes) state.likes = new Likes();
@@ -155,27 +150,25 @@ function controlLike() {
 
   // not liked yet
   if (!state.likes.isLiked(currentID)) {
-    // Add recipe to likes
+    // 1-Add recipe to likes
     const like = state.likes.addLike(
       currentID,
       state.recipe.title,
       state.recipe.author,
       state.recipe.img
     );
-
-    // toggle like button class
+    // 2-toggle like button class
     likesView.toggleLikeBtn(false);
-
-    // Add like to like list
+    // 3-Add like to like list
     likesView.renderLike(like);
+
+    // its liked
   } else {
-    // remove recipe to likes
+    // 1-remove recipe to likes
     state.likes.deleteLike(currentID);
-
-    // toggle like button class
+    // 2-toggle like button class
     likesView.toggleLikeBtn(true);
-
-    // Remove like from like list
+    // 3-Remove like from like list
     likesView.deleteLike(currentID);
   }
 
@@ -186,7 +179,6 @@ window.addEventListener("load", (event) => {
   state.likes = new Likes();
   //read date from storage
   state.likes.getData();
-
   //toggle like view box
   likesView.toggleLikeMenu(state.likes?.getNumLikes());
   //render saved likes
@@ -195,8 +187,6 @@ window.addEventListener("load", (event) => {
 
 // event listener for everything that is in recipe page.
 //
-//
-
 elements.recipe.addEventListener("click", (event) => {
   const target = event.target;
   if (target.matches(".btn-decrease, .btn-decrease *")) {
