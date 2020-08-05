@@ -11,12 +11,19 @@ export default class Likes {
       img,
     };
     this.likes.push(like);
+
+    // save data in storage
+    this.saveData();
+
     return like;
   }
 
   deleteLike(id) {
     const index = this.likes.findIndex((like) => like.id === id);
     this.likes.splice(index, 1);
+
+    // Save date in storage
+    this.saveData();
   }
 
   isLiked(id) {
@@ -25,5 +32,15 @@ export default class Likes {
 
   getNumLikes() {
     return this.likes.length;
+  }
+
+  saveData() {
+    localStorage.setItem("likes", JSON.stringify(this.likes));
+  }
+
+  getData() {
+    const storage = JSON.parse(localStorage.getItem("likes"));
+
+    if (storage) this.likes = storage;
   }
 }

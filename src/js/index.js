@@ -148,7 +148,6 @@ elements.shopping.addEventListener("click", (event) => {
  *
  */
 
-state.likes = new Likes();
 function controlLike() {
   // Create like if its not been yet
   if (!state.likes) state.likes = new Likes();
@@ -167,10 +166,7 @@ function controlLike() {
     // toggle like button class
     likesView.toggleLikeBtn(false);
 
-    // Prepare Like Menu
-
     // Add like to like list
-    console.log(state.likes);
     likesView.renderLike(like);
   } else {
     // remove recipe to likes
@@ -180,12 +176,22 @@ function controlLike() {
     likesView.toggleLikeBtn(true);
 
     // Remove like from like list
-    console.log(state.Likes);
     likesView.deleteLike(currentID);
   }
 
   likesView.toggleLikeMenu(state.likes.getNumLikes());
 }
+
+window.addEventListener("load", (event) => {
+  state.likes = new Likes();
+  //read date from storage
+  state.likes.getData();
+
+  //toggle like view box
+  likesView.toggleLikeMenu(state.likes?.getNumLikes());
+  //render saved likes
+  state.likes.likes.forEach((like) => likesView.renderLike(like));
+});
 
 // event listener for everything that is in recipe page.
 //
