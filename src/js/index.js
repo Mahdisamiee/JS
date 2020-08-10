@@ -207,3 +207,40 @@ elements.recipe.addEventListener("click", (event) => {
     controlLike();
   }
 });
+
+//** event delgation for document tooltip  */
+let tooltipElem;
+["mouseover", "mouseout"].forEach((event) =>
+  document.addEventListener(event, (event) => {
+    let target = event.target.closest("[data-tooltip]");
+
+    if (!target) return;
+
+    if (event.type === "mouseover") {
+      tooltipElem = document.createElement("div");
+      tooltipElem.textContent = target.dataset.tooltip;
+      tooltipElem.classList.add("tooltip");
+
+      document.body.append(tooltipElem);
+
+      let coords = target.getBoundingClientRect();
+
+      let left =
+        coords.left + (target.offsetWidth - tooltipElem.offsetWidth) / 2;
+      if (left < 0) left = 0; // don't cross the left window edge
+      let top = coords.top - tooltipElem.offsetHeight - 5;
+      if (top < 0) {
+        // if crossing the top window edge, show below instead
+        top = coords.top + target.offsetHeight + 5;
+      }
+
+      tooltipElem.style.left = left + "px";
+      tooltipElem.style.top = top + "px";
+    } else if (event.type === "mouseout") {
+      if (tooltipElem) {
+        tooltipElem.remove();
+        tooltipElem = null;
+      }
+    }
+  })
+);

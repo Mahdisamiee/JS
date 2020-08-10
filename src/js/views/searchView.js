@@ -23,7 +23,9 @@ const limitRecipeTitle = (title, limit = 17) => {
 const renderRecipe = (recipe) => {
   const markup = `
         <li>
-            <a class="results__link " href="#${parseInt(recipe.calories)}">
+            <a class="results__link " href="#${parseInt(
+              recipe.calories
+            )}" data-tooltip=${recipe.label}>
                 <figure class="results__fig">
                     <img src=${recipe.image} alt="${recipe.label}">
                 </figure>
